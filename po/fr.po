@@ -9,14 +9,14 @@
 # Christian Perrier <bubulle@debian.org>, 2004-2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013.
 # Julien Patriarca <leatherface@debian.org>, 2013, 2017, 2018.
 # Baptiste Jammet <baptiste@mailoo.org>, 2019.
-# bubu <bubub@no-log.org>, 2025.
+# bubu <bubub@no-log.org>, Karim SADEG <karim@sadeg.info>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2025-05-19 18:28+0200\n"
-"PO-Revision-Date: 2025-03-07 12:02+0100\n"
-"Last-Translator: bubu <bubub@no-log.org>\n"
+"PO-Revision-Date: 2025-08-31 18:25+0100\n"
+"Last-Translator: Karim SADEG <karim@sadeg.info>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -46,7 +46,7 @@ msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
-"Voir les pages de manuel d'apt-secure(8) pour la création des dépôts et les "
+"Voir les pages du manuel d'apt-secure(8) pour la création des dépôts et les "
 "détails de configuration d'un utilisateur."
 
 #: apt-pkg/acquire-item.cc
@@ -106,7 +106,7 @@ msgstr ""
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
-msgstr "impossible de changer le nom, %s (%s -> %s)."
+msgstr "échec de renommage, %s (%s -> %s)."
 
 #: apt-pkg/acquire-item.cc
 msgid "Size mismatch"
@@ -114,7 +114,7 @@ msgstr "Taille incohérente"
 
 #: apt-pkg/acquire-item.cc
 msgid "Invalid file format"
-msgstr "Format de fichier non valable"
+msgstr "Format de fichier invalide"
 
 #: apt-pkg/acquire-item.cc
 msgid "Signature error"
@@ -128,7 +128,7 @@ msgid ""
 "authentication?)"
 msgstr ""
 "Le fichier signé en clair n'est pas valable, ce qui a été reçu est « %s ». "
-"Peut-être le réseau nécessite-t-il une authentification."
+"(le réseau nécessite-t-il une authentification ?)"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -138,14 +138,14 @@ msgid ""
 "verification failed: %s: %s"
 msgstr ""
 "Une erreur s'est produite lors du contrôle de la signature. Le dépôt n'est "
-"pas mis à jour et les fichiers d'index précédents seront utilisés. Erreur de "
-"GPG : %s : %s"
+"pas mis à jour et les fichiers d'index précédents seront utilisés. Échec "
+"de la vérification de la signature OpenGPG : %s : %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "OpenPGP signature verification failed: %s: %s"
-msgstr ""
+msgstr "Échec de la vérification de la signature OpenGPG : %s : %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -239,13 +239,13 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 "Cela doit être pleinement accepté avant que les mises à jour depuis ce dépôt "
-"puissent être appliquées. Veuillez vous référer aux pages de manuel « %s » "
+"puissent être appliquées. Veuillez vous référer aux pages du manuel « %s » "
 "pour plus de détails."
 
 #: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "Impossible de récupérer %s  %s"
+msgstr "Échec de la récupération de %s  %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -253,7 +253,7 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
-"Les dépôts devraient fournir un fichier InRelease clairement signé, mais "
+"Les dépôts doivent fournir un fichier InRelease clairement signé, mais "
 "aucun n'a été trouvé à %s."
 
 #: apt-pkg/acquire-item.cc
@@ -262,8 +262,8 @@ msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
-"Impossible de localiser un fichier du paquet %s. Cela signifie que vous "
-"devrez corriger ce paquet vous-même (absence d'architecture)."
+"Je n'ai pas pu localiser un fichier pour le paquet %s. Cela signifie que vous"
+" devrez corriger ce paquet vous-même (architecture absente)."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -287,7 +287,7 @@ msgstr "La méthode « %s » est volontairement désactivée par configuration
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
 msgstr ""
-".Si vous souhaitiez utiliser Tor, veuillez alors utiliser « %s » plutôt que "
+".Si vous souhaitiez utiliser Tor, veuillez utiliser « %s » plutôt que "
 "« %s »."
 
 #: apt-pkg/acquire-worker.cc
@@ -316,7 +316,7 @@ msgstr ""
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %s is missing."
-msgstr "Le répertoire %s pour les listes n'existe pas."
+msgstr "Le répertoire de liste %s n'existe pas."
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -332,8 +332,8 @@ msgstr "Impossible de verrouiller le répertoire %s"
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr ""
-"Il n'existe aucun utilisateur « %s » pour le bac à sable sur ce système, il "
-"est impossible de supprimer les droits."
+"Il n'existe aucun utilisateur « %s » pour le bac à sable sur ce système,"
+"impossible d'abandonner les droits."
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -382,14 +382,13 @@ msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
-"Erreur, pkgProblem::Resolve a généré des ruptures, ce qui a pu être causé "
-"par les paquets devant être gardés en l'état."
+"Erreur, pkgProblemResolver::Resolve a généré des ruptures, ce qui a pu être causé "
+"par les paquets figés."
 
 #: apt-pkg/algorithms.cc
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
-"Impossible de corriger les problèmes, des paquets défectueux sont en mode "
-"« garder en l'état »."
+"Impossible de corriger les problèmes, des paquets défectueux sont figés."
 
 #: apt-pkg/cachefile.cc
 msgid "The package lists or status file could not be parsed or opened."
@@ -1377,7 +1376,7 @@ msgstr "Échec du solveur externe sans message d'erreur adapté"
 
 #: apt-pkg/edsp.cc apt-pkg/upgrade.cc
 msgid "Calculating upgrade"
-msgstr "Calcul de la mise à jour"
+msgstr "Calcul de la mise à niveau"
 
 #: apt-pkg/edsp.cc
 msgid "Solving dependencies"
@@ -1776,7 +1775,7 @@ msgstr "Impossible de corriger les dépendances"
 
 #: apt-private/private-cachefile.cc
 msgid "Unable to minimize the upgrade set"
-msgstr "Impossible de minimiser le nombre de paquets mis à jour"
+msgstr "Impossible de réduire le nombre de paquets mis à niveau"
 
 #: apt-private/private-cachefile.cc
 msgid " Done"
@@ -2046,12 +2045,12 @@ msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
-"Les paquets gelés ont été modifiés et -y a été utilisé sans --allow-change-"
+"Les paquets figés ont été modifiés et -y a été utilisé sans --allow-change-"
 "held-packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
-msgstr "Erreur interne. Le tri a été interrompu."
+msgstr "Erreur interne. Le tri ne s'est pas terminé."
 
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
@@ -2062,7 +2061,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Taille du téléchargement : %sB / %sB\n"
+msgstr "  Taille du téléchargement : %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2074,14 +2073,14 @@ msgstr "Il est nécessaire de prendre %so/%so dans les archives.\n"
 #: apt-private/private-install.cc
 #, c-format
 msgid "  Download size: %sB\n"
-msgstr "Taille du téléchargement : %sB\n"
+msgstr "  Taille du téléchargement : %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Il est nécessaire de prendre %sB dans les archives.\n"
+msgstr "Il est nécessaire de prendre %so dans les archives.\n"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2094,7 +2093,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr "Espace nécessaire : %sB / %sB disponible\n"
+msgstr "Espace nécessaire : %so / %so disponible\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2102,7 +2101,7 @@ msgstr "Espace nécessaire : %sB / %sB disponible\n"
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
-"Besoin de plus d'espace que disponible : %sB > %sB, l'installation risque "
+"Besoin de plus d'espace que disponible : %so > %so, l'installation risque "
 "d'échouer"
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -2113,7 +2112,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr "dans %s : %sB / %sB disponible\n"
+msgstr "dans %s : %so / %so disponible\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2123,25 +2122,25 @@ msgstr "dans %s : %sB / %sB disponible\n"
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
-"Besoin de plus d'espace dans %s que disponible : %sB > %sB, l'installation "
+"Besoin de plus d'espace dans %s que disponible : %so > %so, l'installation "
 "risque d'échouer"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr "Espace nécessaire : %sB\n"
+msgstr "Espace nécessaire : %so\n"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "  Freed space: %sB\n"
-msgstr "  Espace libéré : %sB\n"
+msgstr "  Espace libéré : %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Après cette opération, %sB d'espace disque seront libérés.\n"
+msgstr "Après cette opération, %so d'espace disque seront libérés.\n"
 
 #: apt-private/private-install.cc
 msgid "Trivial Only specified but this is not a trivial operation."
@@ -2154,8 +2153,8 @@ msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
 msgstr ""
-"Enlever des paquets critiques du système étiquetés « Essentiel » n'est pas "
-"permis. Cela pourrait casser votre système."
+"La suppression de paquets critiques pour le système n'est pas permise."
+" Cela pourrait endommager le système."
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
@@ -2171,11 +2170,11 @@ msgstr "Souhaitez-vous continuer ?"
 
 #: apt-private/private-install.cc
 msgid "Abort."
-msgstr "Annulation."
+msgstr "Abandonner."
 
 #: apt-private/private-install.cc
 msgid "Some files failed to download"
-msgstr "Certains fichiers n'ont pu être téléchargés."
+msgstr "Certains fichiers n'ont pas pu être téléchargés."
 
 #: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
@@ -2184,15 +2183,15 @@ msgstr "Téléchargement achevé et dans le mode téléchargement uniquement"
 #: apt-private/private-install.cc
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr ""
-"l'option --fix-missing et l'échange de support ne sont pas encore reconnus."
+"l'option --fix-missing et l'échange de support ne sont pas encore gérés."
 
 #: apt-private/private-install.cc
 msgid "Unable to correct missing packages."
-msgstr "Impossible de corriger le fait que des paquets manquent."
+msgstr "Impossible de corriger les paquets manquants."
 
 #: apt-private/private-install.cc
 msgid "Aborting install."
-msgstr "Annulation de l'installation."
+msgstr "Abandon de l'installation."
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2211,7 +2210,7 @@ msgstr[1] ""
 #: apt-private/private-install.cc
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr ""
-"Note : cette opération volontaire (effectuée par dpkg) est automatique."
+"Note : cette opération est effectuée automatiquement et volontairement par dpkg."
 
 #: apt-private/private-install.cc
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
@@ -2281,13 +2280,13 @@ msgstr "Les paquets supplémentaires suivants seront installés : "
 #: apt-private/private-install.cc
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "Passe %s, il est déjà installé et la mise à jour n'est pas prévue.\n"
+msgstr "%s ignoré, il est déjà installé et la mise à niveau n'est pas prévue.\n"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
-"%s ignoré : il n'est pas installé et seules des mises à jour ont été "
+"%s ignoré : il n'est pas installé et seules des mises à niveau ont été "
 "demandées.\n"
 
 #: apt-private/private-install.cc
@@ -2356,7 +2355,7 @@ msgstr "inconnu"
 #: apt-private/private-output.cc
 #, c-format
 msgid "[installed,upgradable to: %s]"
-msgstr "[installé, pouvant être mis à jour vers : %s]"
+msgstr "[installé, pouvant être mis à niveau vers : %s]"
 
 #: apt-private/private-output.cc
 msgid "[installed,local]"
@@ -2377,7 +2376,7 @@ msgstr "[installé]"
 #: apt-private/private-output.cc
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr "[pouvant être mis à jour depuis : %s]"
+msgstr "[pouvant être mis à niveau depuis : %s]"
 
 #: apt-private/private-output.cc
 msgid "[residual-config]"
@@ -2431,7 +2430,7 @@ msgstr "Installation de :"
 
 #: apt-private/private-output.cc
 msgid "Installing dependencies:"
-msgstr "Installation de dépendances : "
+msgstr "Installation des dépendances : "
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
@@ -2447,11 +2446,11 @@ msgstr "Les mises à jour suivantes ont été différées à cause du phasage :
 
 #: apt-private/private-output.cc
 msgid "Not upgrading yet due to phasing:"
-msgstr "Aucune mise à jour pour le moment à cause du phasage :"
+msgstr "Aucune mise à niveau pour le moment à cause du phasage :"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr "Pas mis à jour :"
+msgstr "Pas mis à niveau :"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2459,27 +2458,27 @@ msgstr "Les paquets suivants ont été conservés :"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be upgraded:"
-msgstr "Les paquets suivants seront mis à jour :"
+msgstr "Les paquets suivants seront mis à niveau :"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr "Mis à jour :"
+msgstr "Mise à niveau :"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr "RÉTROGRADÉ :"
+msgstr "RÉTROGRADAGE :"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Les paquets suivants seront mis à une VERSION INFÉRIEURE :"
+msgstr "Les paquets suivants seront RÉTROGRADÉS :"
 
 #: apt-private/private-output.cc
 msgid "Changing held packages:"
-msgstr "Changement des paquets retenus :"
+msgstr "Changement des paquets figés :"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
-msgstr "Les paquets retenus suivants seront changés :"
+msgstr "Les paquets figés suivants seront changés :"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2497,17 +2496,17 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr "Sommaire :"
+msgstr "Résumé :"
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu mis à jour, %lu nouvellement installés, "
+msgstr "%lu mis à niveau, %lu nouvellement installés, "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "Mise à niveau de : %lu. Installation de : %lu"
+msgstr "Mise à niveau de : %lu. Installation de : %lu. "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2517,27 +2516,27 @@ msgstr "%lu réinstallés, "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Reinstalling: %lu, "
-msgstr "Réinstallation de : %lu."
+msgstr "Réinstallation de : %lu. "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
-msgstr "%lu remis à une version inférieure, "
+msgstr "%lu rétrogradés, "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "Downgrading: %lu, "
-msgstr "Rétrogradage de : %lu."
+msgstr "Rétrogradage de : %lu. "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu à enlever et %lu non mis à jour.\n"
+msgstr "%lu à enlever et %lu non mis à niveau.\n"
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr "Supprimé : %lu. Non mis à jour : %lu\n"
+msgstr "Suppression : %lu. Non mis à niveau : %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2829,7 +2828,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
-msgstr "L'entrée %s pour « %s » devrait être mise à jour en .sources deb822"
+msgstr "L'entrée %s pour « %s » devrait être mise à niveau en .sources deb822"
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2870,10 +2869,10 @@ msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
 msgstr[0] ""
-"%i paquet peut être mis à jour. Exécutez « apt list --upgradable » pour le "
+"%i paquet peut être mis à niveau. Exécutez « apt list --upgradable » pour le "
 "voir.\n"
 msgstr[1] ""
-"%i paquets peuvent être mis à jour. Exécutez « apt list --upgradable » pour "
+"%i paquets peuvent être mis à niveau. Exécutez « apt list --upgradable » pour "
 "les voir.\n"
 
 #: apt-private/private-update.cc
@@ -3175,7 +3174,7 @@ msgstr "Récupérer les nouvelles listes de paquets"
 
 #: cmdline/apt-get.cc
 msgid "Perform an upgrade"
-msgstr "Réaliser une mise à jour"
+msgstr "Réaliser une mise à niveau"
 
 #: cmdline/apt-get.cc
 msgid "Install new packages (pkg is libc6 not libc6.deb)"
@@ -3215,11 +3214,11 @@ msgstr "Satisfaire les chaînes de dépendances"
 
 #: cmdline/apt-get.cc
 msgid "Erase downloaded archive files"
-msgstr "Supprimer dans le cache local tous les fichiers téléchargés"
+msgstr "Supprimer les fichiers d'archives téléchargés"
 
 #: cmdline/apt-get.cc
 msgid "Erase old downloaded archive files"
-msgstr "Supprimer dans le cache local les fichiers inutiles"
+msgstr "Supprimer les anciens fichiers d'archives téléchargés"
 
 #: cmdline/apt-get.cc
 msgid "Verify that there are no broken dependencies"
@@ -3245,7 +3244,7 @@ msgstr "Nécessite une adresse URL comme argument"
 
 #: cmdline/apt-helper.cc
 msgid "Must specify at least one pair url/filename"
-msgstr "Vous devez spécifier au moins un couple adresse url/fichier"
+msgstr "Vous devez spécifier au moins une combinaison url/fichier"
 
 #: cmdline/apt-helper.cc
 msgid "Download Failed"
@@ -3433,11 +3432,11 @@ msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
-msgstr "Marquer un paquet comme maintenu dans une version"
+msgstr "Marquer un paquet comme figé"
 
 #: cmdline/apt-mark.cc
 msgid "Unset a package set as held back"
-msgstr "Supprimer le marquage d'un paquet maintenu dans une version"
+msgstr "Supprimer le marquage d'un paquet figé"
 
 #: cmdline/apt-mark.cc
 msgid "Print the list of automatically installed packages"
@@ -3517,7 +3516,7 @@ msgstr "supprimer des paquets"
 
 #: cmdline/apt.cc
 msgid "automatically remove all unused packages"
-msgstr "Supprimer automatiquement tous les paquets inutilisés"
+msgstr "supprimer automatiquement tous les paquets inutilisés"
 
 #. system wide stuff
 #: cmdline/apt.cc
@@ -3526,12 +3525,12 @@ msgstr "mettre à jour la liste des paquets disponibles"
 
 #: cmdline/apt.cc
 msgid "upgrade the system by installing/upgrading packages"
-msgstr "mettre à jour le système en installant/mettant à jour les paquets"
+msgstr "mettre à niveau le système en installant/mettant à niveau les paquets"
 
 #: cmdline/apt.cc
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
-"mettre à jour le système en supprimant/installant/mettant à jour les paquets"
+"mettre à niveau le système en supprimant/installant/mettant à niveau les paquets"
 
 #. misc
 #: cmdline/apt.cc
@@ -3713,7 +3712,7 @@ msgstr "Base de données corrompue, fichier renommé en %s.old"
 #: ftparchive/cachedb.cc
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
-msgstr "Base de données ancienne, tentative de mise à jour de %s"
+msgstr "Base de données ancienne, tentative de mise à niveau de %s"
 
 #: ftparchive/cachedb.cc
 msgid ""
@@ -3932,7 +3931,7 @@ msgstr "Échec de la connexion"
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
 "Le fichier a une taille incohérente (%llu != %llu). Le miroir est peut-être "
-"en cours de mise à jour ?"
+"en cours de synchronisation ?"
 
 #: methods/basehttp.cc
 #, c-format
@@ -4081,7 +4080,7 @@ msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
 "Le fichier signé n'est pas valable, ce qui a été reçu est « %s » (peut-être "
-"le réseau nécessite-t-il une authentification ?)"
+"le réseau nécessite-t-il une authentification ?)"
 
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
@@ -4276,7 +4275,7 @@ msgstr "Les fichiers vides ne peuvent être des archives valables"
 #, fuzzy
 #~| msgid "The following held packages will be changed:"
 #~ msgid "Changing held packages:Changing held packages:"
-#~ msgstr "Les paquets retenus suivants seront changés :"
+#~ msgstr "Les paquets figés suivants seront changés :"
 
 # The space before the exclamation mark must not be a non-breaking space; this
 # sentence is supposed to be typed by a user who cannot see the difference.
