@@ -19,19 +19,6 @@
 
 namespace History
 {
-struct HistoryEntry
-{
-   // Strings instead of string_view to avoid reference errors
-   std::string start_date;
-   std::string end_date;
-   std::string cmd_line;
-   std::string comment;
-   std::string error;
-   std::string requesting_user;
-   std::map<std::string, std::string> action_content_map;
-};
-// History is defined as the collection of entries in the history log(s).
-typedef std::vector<HistoryEntry> HistoryBuffer;
 
 enum class HistoryAction
 {
@@ -44,11 +31,28 @@ enum class HistoryAction
    FILLER // helper for iteration, always last
 };
 
+struct HistoryEntry
+{
+   // Strings instead of string_view to avoid reference errors
+   std::string start_date;
+   std::string end_date;
+   std::string cmd_line;
+   std::string comment;
+   std::string error;
+   std::string requesting_user;
+   std::map<HistoryAction, std::string> action_content_map;
+};
+
+// History is defined as the collection of entries in the history log(s).
+typedef std::vector<HistoryEntry> HistoryBuffer;
+
+
 struct ActionMapping
 {
    HistoryAction action;
    std::string_view name;
 };
+
 
 // faster than a map, but order has to be equal to enum definition order
 static constexpr std::array<ActionMapping, static_cast<size_t>(HistoryAction::FILLER)> HISTORY_ACTION_MAPPINGS = {{{HistoryAction::INSTALL, "Install"}, {HistoryAction::REINSTALL, "Reinstall"}, {HistoryAction::UPGRADE, "Upgrade"}, {HistoryAction::DOWNGRADE, "Downgrade"}, {HistoryAction::REMOVE, "Remove"}, {HistoryAction::PURGE, "Purge"}}};

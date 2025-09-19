@@ -36,7 +36,7 @@ TEST(HistoryParseTest, SectionToEntry)
    EXPECT_EQ("An error occurred", entry.error);
    EXPECT_EQ("This is a comment", entry.comment);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0+git20250813.4af2a84-0ubuntu2)",
-	     entry.action_content_map["Install"]);
+	     entry.action_content_map[History::HistoryAction::INSTALL]);
 }
 
 TEST(HistoryParseTest, EmptyOptionalFields)
@@ -83,15 +83,15 @@ TEST(HistoryParseTest, MultipleActions)
 
    History::HistoryEntry entry = History::ParseSection(section);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0+git20250813.4af2a84-0ubuntu2)",
-	     entry.action_content_map["Install"]);
+	     entry.action_content_map[History::HistoryAction::INSTALL]);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0+git20250813.4af2a84-0ubuntu2)",
-	     entry.action_content_map["Remove"]);
+	     entry.action_content_map[History::HistoryAction::REMOVE]);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0, 0.0.0)",
-	     entry.action_content_map["Downgrade"]);
+	     entry.action_content_map[History::HistoryAction::DOWNGRADE]);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0+git20250813.4af2a84-0ubuntu2)",
-	     entry.action_content_map["Reinstall"]);
+	     entry.action_content_map[History::HistoryAction::REINSTALL]);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0, 0.2.0)",
-	     entry.action_content_map["Upgrade"]);
+	     entry.action_content_map[History::HistoryAction::UPGRADE]);
    EXPECT_EQ("rust-coreutils:amd64 (0.1.0+git20250813.4af2a84-0ubuntu2)",
-	     entry.action_content_map["Purge"]);
+	     entry.action_content_map[History::HistoryAction::PURGE]);
 }

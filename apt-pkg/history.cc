@@ -33,7 +33,7 @@ HistoryEntry ParseSection(
       content = section.Find(mapping.name);
       // Add action content if it was performed
       if (!content.empty())
-	 entry.action_content_map[mapping.name.data()] = content;
+	 entry.action_content_map[mapping.action] = content;
    }
 
    return entry;

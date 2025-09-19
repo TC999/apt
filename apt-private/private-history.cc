@@ -13,6 +13,7 @@
 #include <iomanip>
 #include <iostream>
 #include <regex>
+#include <stdexcept>
 #include <string>
 
 #include <glob.h>
@@ -33,13 +34,14 @@ std::string ShortenCommand(const std::string &cmd, const std::size_t max_len)
 
 std::string GetActionString(const HistoryEntry &entry)
 {
+   // We want full output if there is only one action
    if (entry.action_content_map.size() == 1)
-      return entry.action_content_map.begin()->first;
+      return action_to_string(entry.action_content_map.begin()->first).data();
 
    std::string action_group = "";
-   for (const auto &[action_string, _] : entry.action_content_map)
+   for (const auto &[action, _] : entry.action_content_map)
    {
-      switch (string_to_action(action_string))
+      switch (action)
       {
       case HistoryAction::INSTALL:
 	 action_group += "I";
@@ -213,13 +215,13 @@ void PrintDetailedEntry(const HistoryBuffer &buf, const size_t id)
 
    // For each performed action, print what it did to each package
    std::cout << "Packages changed: " << "\n";
-   for (const auto &[action_string, content] : entry.action_content_map)
+   for (const auto &[action, content] : entry.action_content_map)
    {
       std::vector<std::string> package_events = SplitPackagesInContent(content);
       std::sort(package_events.begin(), package_events.end());
       for (const auto &package : package_events)
       {
-	 PrintPackageEvent(package, action_string);
+	 PrintPackageEvent(package, action_to_string(action).data());
 	 std::cout << "\n";
       }
       std::cout << "\n";
@@ -231,7 +233,8 @@ bool DoHistoryList(CommandLine &Cmd)
    HistoryBuffer buf = {};
 
    if (!FillHistoryBuffer(buf))
-      return false;
+      return _error->Error(_("Could not read %s"),
+			   _config->FindFile("Dir::Log::History").data());
    PrintHistoryVector(buf, 25);
 
    return true;
@@ -241,18 +244,24 @@ bool DoHistoryInfo(CommandLine &Cmd)
 {
    HistoryBuffer buf = {};
    if (!FillHistoryBuffer(buf))
-      return false;
+      return _error->Error(_("Could not read %s"),
+			   _config->FindFile("Dir::Log::History").data());
 
-   // This is ugly, check that the correct number of arguments where supplied
-   size_t id = std::stoi(*(Cmd.FileList + 1));
-   if (buf.size() <= id)
+   size_t id = 0;
+   for (size_t i = 1; i < Cmd.FileSize(); i++)
    {
-      std::cout << "Invalid transaction ID: " << id << ", when history has ";
-      std::cout << buf.size();
-      std::cout << (buf.size() == 1 ? " entry!" : " entries!") << std::endl;
-      return false;
+      try
+      {
+	 id = std::stoi(*(Cmd.FileList + i));
+      }
+      catch (const std::invalid_argument &e)
+      {
+	 return _error->Error(_("'%s' not a valid ID."), *(Cmd.FileList + i));
+      }
+      if (buf.size() <= id)
+	 return _error->Error(_("Transaction ID '%ld' out of bounds."), id);
+      PrintDetailedEntry(buf, id);
    }
-   PrintDetailedEntry(buf, id);
 
    return true;
 }
