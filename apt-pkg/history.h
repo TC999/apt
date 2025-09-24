@@ -9,18 +9,20 @@
 #ifndef APTPKG_HISTORY_H
 #define APTPKG_HISTORY_H
 
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/tagfile.h>
 
 #include <array>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
-namespace History
+namespace APT::History
 {
 
-enum class HistoryAction
+enum class Kind
 {
    INSTALL,
    REINSTALL,
@@ -31,50 +33,67 @@ enum class HistoryAction
    FILLER // helper for iteration, always last
 };
 
-struct HistoryEntry
+struct Change
+{
+   Kind kind;
+   std::string package;
+   std::string currentVersion;
+   std::string candidateVersion;
+   bool automatic = false;
+
+   private:
+   void *d; // pointer for future extension;
+};
+
+struct Entry
 {
    // Strings instead of string_view to avoid reference errors
-   std::string start_date;
-   std::string end_date;
-   std::string cmd_line;
+   std::string startDate;
+   std::string endDate;
+   std::string cmdLine;
    std::string comment;
    std::string error;
-   std::string requesting_user;
-   std::map<HistoryAction, std::string> action_content_map;
+   std::string requestingUser;
+   std::map<Kind, std::vector<Change>> changeMap;
 };
 
 // History is defined as the collection of entries in the history log(s).
-typedef std::vector<HistoryEntry> HistoryBuffer;
+typedef std::vector<Entry> HistoryBuffer;
 
-
-struct ActionMapping
+struct KindMapping
 {
-   HistoryAction action;
+   Kind kind;
    std::string_view name;
 };
 
-
 // faster than a map, but order has to be equal to enum definition order
-static constexpr std::array<ActionMapping, static_cast<size_t>(HistoryAction::FILLER)> HISTORY_ACTION_MAPPINGS = {{{HistoryAction::INSTALL, "Install"}, {HistoryAction::REINSTALL, "Reinstall"}, {HistoryAction::UPGRADE, "Upgrade"}, {HistoryAction::DOWNGRADE, "Downgrade"}, {HistoryAction::REMOVE, "Remove"}, {HistoryAction::PURGE, "Purge"}}};
+static constexpr std::array<KindMapping, static_cast<size_t>(Kind::FILLER)> KIND_MAPPINGS = {{{Kind::INSTALL, "Install"}, {Kind::REINSTALL, "Reinstall"}, {Kind::UPGRADE, "Upgrade"}, {Kind::DOWNGRADE, "Downgrade"}, {Kind::REMOVE, "Remove"}, {Kind::PURGE, "Purge"}}};
 
-static constexpr std::string_view action_to_string(const HistoryAction &action)
+static constexpr std::string_view kind_to_string(const Kind &kind)
 {
-   size_t idx = static_cast<size_t>(action);
-   return idx < HISTORY_ACTION_MAPPINGS.size() ? HISTORY_ACTION_MAPPINGS[idx].name : "Undefined";
+   size_t idx = static_cast<size_t>(kind);
+   return idx < KIND_MAPPINGS.size() ? KIND_MAPPINGS[idx].name : "Undefined";
 }
 
-static constexpr HistoryAction string_to_action(const std::string &s)
+static constexpr std::optional<Kind> string_to_kind(const std::string &s)
 {
-   for (const auto &mapping : HISTORY_ACTION_MAPPINGS)
+   for (const auto &mapping : KIND_MAPPINGS)
       if (mapping.name == s)
-	 return mapping.action;
+	 return mapping.kind;
 
-   // this is equivalent to an invalid string, consider optional type
-   return HistoryAction::FILLER;
+   return std::nullopt;
 }
 
-APT_PUBLIC HistoryEntry ParseSection(const pkgTagSection &section);
-APT_PUBLIC bool TryParseFile(const std::string &filename, HistoryBuffer &buf);
-} // namespace History
+// ParseSection - Take a tag section and parse it as a
+// history log entry.
+APT_PUBLIC Entry ParseSection(const pkgTagSection &section);
+// ParseFile - Take a file descriptor and parse it as a history
+// log to the given buffer.
+//
+// NOTE: Caller is responsible for closing the file descriptor.
+APT_PUBLIC bool ParseFile(FileFd &fd, HistoryBuffer &buf);
+// ParseLogDir - Parse the apt history log directory to the buffer.
+APT_PUBLIC bool ParseLogDir(HistoryBuffer &buf);
+} // namespace APT::History
 
 #endif
