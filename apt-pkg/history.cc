@@ -3,7 +3,7 @@
 /* ######################################################################
    Set of functions for parsing the history log
    ##################################################################### */
-									/*}}}*/
+/*}}}*/
 // Include Files							/*{{{*/
 
 #include <config.h>
@@ -14,8 +14,7 @@
 #include <apt-pkg/history.h>
 #include <apt-pkg/tagfile.h>
 
-#include <regex>
-#include <unordered_map>
+#include <algorithm>
 
 #include <glob.h>
 #include <apti18n.h> // for coloring
@@ -23,39 +22,48 @@
 namespace APT::History
 {
 
-// Check if the string is a version
-inline bool is_version(const std::string &s)
-{
-   static const std::regex version_regex(R"(\d[\w\.\+\-\~:]*)");
-   return std::regex_match(s, version_regex);
-}
-
 static Change ParsePackageEvent(const std::string &event)
 {
    Change change{};
-   auto openParen = event.find(" (");
+   // Remove all spaces
+   std::string trimEvent = event;
+   trimEvent.erase(std::remove_if(trimEvent.begin(), trimEvent.end(),
+				  [](unsigned char c)
+				  { return std::isspace(c); }),
+		   trimEvent.end());
+   auto openParen = trimEvent.find('(');
    if (openParen == std::string::npos)
       return change;
 
-   change.package = event.substr(0, openParen);
+   change.package = trimEvent.substr(0, openParen);
 
-   auto closeParen = event.find(')', openParen);
+   auto closeParen = trimEvent.find(')', openParen);
    if (closeParen == std::string::npos)
       return change;
 
-   std::string versionStr = event.substr(openParen + 2, closeParen - openParen - 2);
+   std::string versionStr = trimEvent.substr(openParen + 1, closeParen - openParen - 1);
 
-   auto commaPos = versionStr.find(", ");
+   auto commaPos = versionStr.find(",");
    if (commaPos == std::string::npos)
    {
       change.currentVersion = versionStr;
       return change;
    }
    change.currentVersion = versionStr.substr(0, commaPos);
-   std::string candidate = versionStr.substr(commaPos + 2);
-   if (is_version(candidate))
+   std::string candidate = versionStr.substr(commaPos + 1);
+   // if an upgrade/downgrade was automatic
+   auto otherCommaPos = versionStr.find(",", commaPos + 1);
+   std::string autoStr = "";
+   if (otherCommaPos != std::string::npos)
+      autoStr = versionStr.substr(otherCommaPos + 1);
+
+   if (std::isdigit(candidate[0]))
+   {
       change.candidateVersion = candidate;
-   else
+      if (autoStr == "automatic")
+	 change.automatic = true;
+   }
+   else if (candidate == "automatic")
       change.automatic = true;
 
    return change;
@@ -85,6 +93,27 @@ static std::vector<std::string> SplitPackagesInContent(const std::string &conten
    return result;
 }
 
+std::string KindToString(const Kind &kind)
+{
+   switch (kind)
+   {
+   case Kind::Install:
+      return "Install";
+   case Kind::Reinstall:
+      return "Reinstall";
+   case Kind::Upgrade:
+      return "Upgrade";
+   case Kind::Downgrade:
+      return "Downgrade";
+   case Kind::Remove:
+      return "Remove";
+   case Kind::Purge:
+      return "Purge";
+   default:
+      return "Undefined";
+   }
+}
+
 Entry ParseSection(
    const pkgTagSection &section)
 {
@@ -97,9 +126,18 @@ Entry ParseSection(
    entry.error = section.Find("Error");
 
    std::string content = "";
-   for (const auto &mapping : KIND_MAPPINGS)
+   const Kind kinds[] =
+      {
+	 Kind::Install,
+	 Kind::Reinstall,
+	 Kind::Downgrade,
+	 Kind::Upgrade,
+	 Kind::Remove,
+	 Kind::Purge,
+      };
+   for (const auto &kind : kinds)
    {
-      content = section.Find(mapping.name);
+      content = section.Find(KindToString(kind));
       if (content.empty())
 	 continue;
 
@@ -108,13 +146,13 @@ Entry ParseSection(
       for (auto event : package_events)
       {
 	 Change change = ParsePackageEvent(event);
-	 change.kind = mapping.kind;
+	 change.kind = kind;
 	 changes.push_back(change);
       }
       // Changed packages should be in order
       std::sort(changes.begin(), changes.end(), [](const Change &a, const Change &b)
 		{ return a.package < b.package; });
-      entry.changeMap[mapping.kind] = changes;
+      entry.changeMap[kind] = changes;
    }
 
    return entry;
@@ -125,9 +163,7 @@ bool ParseFile(FileFd &fd, HistoryBuffer &buf)
    pkgTagFile file(&fd, FileFd::ReadOnly);
    pkgTagSection tmpSection;
    while (file.Step(tmpSection))
-   {
       buf.push_back(ParseSection(tmpSection));
-   }
    return true;
 }
 
@@ -149,9 +185,9 @@ bool ParseLogDir(HistoryBuffer &buf)
       if (not fd.Open(result.gl_pathv[i], FileFd::ReadOnly, FileFd::Extension))
 	 return _error->Error(_("Could not open file %s"), result.gl_pathv[i]);
       if (not ParseFile(fd, buf))
-	 return _error->Error(_("Could parse file %s"), result.gl_pathv[i]);
+	 return _error->Error(_("Could not parse file %s"), result.gl_pathv[i]);
       if (not fd.Close())
-	 return _error->Error(_("Could close file %s"), result.gl_pathv[i]);
+	 return _error->Error(_("Could not close file %s"), result.gl_pathv[i]);
    }
 
    // Sort entries by time

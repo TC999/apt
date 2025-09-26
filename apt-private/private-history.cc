@@ -12,7 +12,6 @@
 
 #include <iomanip>
 #include <iostream>
-#include <regex>
 #include <stdexcept>
 #include <string>
 
@@ -34,6 +33,27 @@ static std::string ShortenCommand(const std::string &cmd, const std::size_t maxL
    return shortenedCmd;
 }
 
+static std::string LocalizeKindToString(const Kind &kind)
+{
+   switch (kind)
+   {
+   case Kind::Install:
+      return _("Install");
+   case Kind::Reinstall:
+      return _("Reinstall");
+   case Kind::Upgrade:
+      return _("Upgrade");
+   case Kind::Downgrade:
+      return _("Downgrade");
+   case Kind::Remove:
+      return _("Remove");
+   case Kind::Purge:
+      return _("Purge");
+   default:
+      return _("Undefined");
+   }
+}
+
 // GetKindString - Take a history entry and construct the string
 // corresponding to the actions performed. Multpile actions are
 // alphabetically grouped such as:
@@ -51,7 +71,7 @@ static std::string GetKindString(const Entry &entry)
 {
    // We want full output if there is only one action
    if (entry.changeMap.size() == 1)
-      return kind_to_string(entry.changeMap.begin()->first).data();
+      return LocalizeKindToString(entry.changeMap.begin()->first).data();
 
    std::string kindGroup = "";
    // add localization later
@@ -59,22 +79,22 @@ static std::string GetKindString(const Entry &entry)
    {
       switch (action)
       {
-      case Kind::INSTALL:
+      case Kind::Install:
 	 kindGroup += "I";
 	 break;
-      case Kind::REINSTALL:
+      case Kind::Reinstall:
 	 kindGroup += "rI";
 	 break;
-      case Kind::UPGRADE:
+      case Kind::Upgrade:
 	 kindGroup += "U";
 	 break;
-      case Kind::DOWNGRADE:
+      case Kind::Downgrade:
 	 kindGroup += "D";
 	 break;
-      case Kind::REMOVE:
+      case Kind::Remove:
 	 kindGroup += "R";
 	 break;
-      case Kind::PURGE:
+      case Kind::Purge:
 	 kindGroup += "P";
 	 break;
       default:
@@ -100,36 +120,38 @@ static void PrintHistoryVector(const HistoryBuffer buf, int columnWidth)
       idWidth++;
    }
 
-// Print headers
-#define WRITE_ENTRY(ENTRY, WIDTH)                          \
-   {                                                       \
-      std::cout << std::left << std::setw(WIDTH) << ENTRY; \
-   }
-   WRITE_ENTRY("ID", idWidth);
-   WRITE_ENTRY("Command line", columnWidth);
-   WRITE_ENTRY("Date and Time", 23); // dates are 20 in length
-   WRITE_ENTRY("Action", 10);	     // 9 chars longest action type
-   WRITE_ENTRY("Changes", columnWidth);
+   // Print headers
+   auto writeEntry = [](std::string entry, size_t width)
+   {
+      std::cout << std::left << std::setw(width) << entry;
+   };
+   writeEntry(_("ID"), idWidth);
+   writeEntry(_("Command line"), columnWidth);
+   // NOTE: if date format is different,
+   // this width needs to change
+   writeEntry(_("Date and Time"), 23); // width for datestring
+   writeEntry(_("Action"), 10);	       // 9 chars longest action type
+   writeEntry(_("Changes"), columnWidth);
    std::cout << "\n\n";
 
    // Each entry corresponds to a row
    for (auto entry : buf)
    {
-      WRITE_ENTRY(id, idWidth);
-      WRITE_ENTRY(ShortenCommand(entry.cmdLine, columnWidth), columnWidth);
-      WRITE_ENTRY(entry.startDate, 23);
+      writeEntry(std::to_string(id), idWidth);
+      writeEntry(ShortenCommand(entry.cmdLine, columnWidth), columnWidth);
+      writeEntry(entry.startDate, 23);
       // If there are multiple actions, we want to group them
-      WRITE_ENTRY(GetKindString(entry), 10);
+      writeEntry(GetKindString(entry), 10);
 
       // Count the number of packages changed
       size_t numChanges = 0;
       for (const auto &[_, changes] : entry.changeMap)
 	 numChanges += changes.size();
-      WRITE_ENTRY(numChanges, columnWidth);
+      writeEntry(std::to_string(numChanges), columnWidth);
       std::cout << "\n";
       id++;
    }
-#undef WRITE_ENTRY
+#undef writeEntry
 }
 
 // PrintChange - Take a change and print the event for that package.
@@ -138,12 +160,12 @@ static void PrintHistoryVector(const HistoryBuffer buf, int columnWidth)
 //  "package (0.1.0)" and "Install" -> "Install package (0.1.0)"
 static void PrintChange(const Change &change)
 {
-   std::cout << "    " << kind_to_string(change.kind) << " " << change.package;
+   std::cout << "    " << LocalizeKindToString(change.kind) << " " << change.package;
    std::cout << " (" << change.currentVersion;
-   if (change.automatic)
-      std::cout << ", automatic";
    if (not change.candidateVersion.empty())
       std::cout << " -> " << change.candidateVersion;
+   if (change.automatic)
+      std::cout << ", " << _("automatic");
 
    std::cout << ")";
 }
@@ -153,21 +175,21 @@ static void PrintChange(const Change &change)
 static void PrintDetailedEntry(const HistoryBuffer &buf, const size_t id)
 {
    Entry entry = buf[id];
-   std::cout << "Transaction ID : " << id << "\n";
-   std::cout << "Start time     : " << entry.startDate << "\n";
-   std::cout << "End time       : " << entry.endDate << "\n";
-   std::cout << "Requested by   : " << entry.requestingUser << "\n";
-   std::cout << "Command line   : " << entry.cmdLine << "\n";
+   std::cout << _("Transaction ID") << ": " << id << "\n";
+   std::cout << _("Start time") << ": " << entry.startDate << "\n";
+   std::cout << _("End time") << ": " << entry.endDate << "\n";
+   std::cout << _("Requested by") << ": " << entry.requestingUser << "\n";
+   std::cout << _("Command line") << ": " << entry.cmdLine << "\n";
    if (not entry.error.empty())
    {
-      std::cout << _config->Find("APT::Color::Red") << _("Error          : ");
+      std::cout << _config->Find("APT::Color::Red") << _("Error") << ": ";
       std::cout << entry.error << _config->Find("APT::Color::Neutral") << "\n";
    }
    if (not entry.comment.empty())
-      std::cout << "Comment        : " << entry.comment << "\n";
+      std::cout << _("Comment") << ": " << entry.comment << "\n";
 
    // For each performed action, print what it did to each package
-   std::cout << "Packages changed: " << "\n";
+   std::cout << _("Packages changed") << ":" << "\n";
    for (const auto &[_, changes] : entry.changeMap)
    {
       for (const auto &change : changes)

@@ -37,8 +37,8 @@ TEST(HistoryParseTest, SectionToEntry)
    EXPECT_EQ("user (1000)", entry.requestingUser);
    EXPECT_EQ("An error occurred", entry.error);
    EXPECT_EQ("This is a comment", entry.comment);
-   EXPECT_EQ("rust-coreutils:amd64", entry.changeMap[Kind::INSTALL][0].package);
-   EXPECT_EQ("0.1.0+git20250813.4af2a84-0ubuntu2", entry.changeMap[Kind::INSTALL][0].currentVersion);
+   EXPECT_EQ("rust-coreutils:amd64", entry.changeMap[Kind::Install][0].package);
+   EXPECT_EQ("0.1.0+git20250813.4af2a84-0ubuntu2", entry.changeMap[Kind::Install][0].currentVersion);
 }
 
 TEST(HistoryParseTest, EmptyOptionalFields)
@@ -84,12 +84,12 @@ TEST(HistoryParseTest, MultipleActions)
    ASSERT_TRUE(tfile.Step(section));
 
    Entry entry = ParseSection(section);
-   Change installChange = entry.changeMap[Kind::INSTALL][0];
-   Change removeChange = entry.changeMap[Kind::REMOVE][0];
-   Change downgradeChange = entry.changeMap[Kind::DOWNGRADE][0];
-   Change reinstallChange = entry.changeMap[Kind::REINSTALL][0];
-   Change upgradeChange = entry.changeMap[Kind::UPGRADE][0];
-   Change purgeChange = entry.changeMap[Kind::PURGE][0];
+   Change installChange = entry.changeMap[Kind::Install][0];
+   Change removeChange = entry.changeMap[Kind::Remove][0];
+   Change downgradeChange = entry.changeMap[Kind::Downgrade][0];
+   Change reinstallChange = entry.changeMap[Kind::Reinstall][0];
+   Change upgradeChange = entry.changeMap[Kind::Upgrade][0];
+   Change purgeChange = entry.changeMap[Kind::Purge][0];
 
    EXPECT_EQ("rust-coreutils:amd64", installChange.package);
    EXPECT_EQ("0.1.0+git20250813.4af2a84-0ubuntu2", installChange.currentVersion);

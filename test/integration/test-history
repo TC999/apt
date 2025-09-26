@@ -46,12 +46,12 @@ normalizedinfo() {
     -e 's|^( *-?Command line *: ).*|\1dummy|'
 }
 
-testsuccessequal "Transaction ID : 0
-Start time     : dummy
-End time       : dummy
-Requested by   : 
-Command line   : dummy
-Packages changed: 
+testsuccessequal "Transaction ID: 0
+Start time: dummy
+End time: dummy
+Requested by: 
+Command line: dummy
+Packages changed:
     Install pkg1:amd64 (1)
 " normalizedinfo
  
