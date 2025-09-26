@@ -151,7 +151,6 @@ static void PrintHistoryVector(const HistoryBuffer buf, int columnWidth)
       std::cout << "\n";
       id++;
    }
-#undef writeEntry
 }
 
 // PrintChange - Take a change and print the event for that package.
@@ -206,7 +205,7 @@ bool DoHistoryList(CommandLine &Cmd)
    HistoryBuffer buf = {};
 
    if (not ParseLogDir(buf))
-      return _error->Error(_("Could not read %s"),
+      return _error->Error(_("Could not read: %s"),
 			   _config->FindFile("Dir::Log::History").data());
    PrintHistoryVector(buf, 25);
 
@@ -217,7 +216,7 @@ bool DoHistoryInfo(CommandLine &Cmd)
 {
    HistoryBuffer buf = {};
    if (not ParseLogDir(buf))
-      return _error->Error(_("Could not read %s"),
+      return _error->Error(_("Could not read: %s"),
 			   _config->FindFile("Dir::Log::History").data());
 
    size_t id = 0;

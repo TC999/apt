@@ -12,9 +12,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/history.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cctype>
 
 #include <glob.h>
 #include <apti18n.h> // for coloring
@@ -42,30 +44,18 @@ static Change ParsePackageEvent(const std::string &event)
       return change;
 
    std::string versionStr = trimEvent.substr(openParen + 1, closeParen - openParen - 1);
-
-   auto commaPos = versionStr.find(",");
-   if (commaPos == std::string::npos)
+   auto values = VectorizeString(versionStr, ',');
+   for (size_t i = 0; i < values.size(); ++i)
    {
-      change.currentVersion = versionStr;
-      return change;
-   }
-   change.currentVersion = versionStr.substr(0, commaPos);
-   std::string candidate = versionStr.substr(commaPos + 1);
-   // if an upgrade/downgrade was automatic
-   auto otherCommaPos = versionStr.find(",", commaPos + 1);
-   std::string autoStr = "";
-   if (otherCommaPos != std::string::npos)
-      autoStr = versionStr.substr(otherCommaPos + 1);
-
-   if (std::isdigit(candidate[0]))
-   {
-      change.candidateVersion = candidate;
-      if (autoStr == "automatic")
+      if (i == 0 && std::isdigit(values[0][0]))
+	 change.currentVersion = std::move(values[i]);
+      else if (i == 1 && std::isdigit(values[1][0]))
+	 change.candidateVersion = std::move(values[i]);
+      else if (values[i] == "automatic")
 	 change.automatic = true;
+      else
+	 _error->Warning(_("Unknown flag: %s"), values[i].c_str());
    }
-   else if (candidate == "automatic")
-      change.automatic = true;
-
    return change;
 }
 
@@ -175,19 +165,17 @@ bool ParseLogDir(HistoryBuffer &buf)
 
    int ret = glob(pattern, GLOB_TILDE, nullptr, &result);
    if (ret != 0)
-   {
-      return false;
-   }
+      return _error->Error(_("Cannot find history files: %s"), files.c_str());
 
    for (size_t i = 0; i < result.gl_pathc; ++i)
    {
       FileFd fd;
       if (not fd.Open(result.gl_pathv[i], FileFd::ReadOnly, FileFd::Extension))
-	 return _error->Error(_("Could not open file %s"), result.gl_pathv[i]);
+	 return _error->Error(_("Could not open file: %s"), result.gl_pathv[i]);
       if (not ParseFile(fd, buf))
-	 return _error->Error(_("Could not parse file %s"), result.gl_pathv[i]);
+	 return _error->Error(_("Could not parse file: %s"), result.gl_pathv[i]);
       if (not fd.Close())
-	 return _error->Error(_("Could not close file %s"), result.gl_pathv[i]);
+	 return _error->Error(_("Could not close file: %s"), result.gl_pathv[i]);
    }
 
    // Sort entries by time
