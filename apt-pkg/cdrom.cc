@@ -446,6 +446,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   DFile.c_str(),DFile.c_str());
+   RemoveFile("WriteDatabase", (DFile + '~').c_str());
 
    return true;
 }
@@ -548,10 +549,12 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    
    Out.close();
 
-   rename(File.c_str(), (File + '~').c_str());
+   if (FileExists(File) == true)
+      rename(File.c_str(), (File + '~').c_str());
    if (rename(NewFile.c_str(),File.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   File.c_str(),File.c_str());
+   RemoveFile("WriteSourceList", (File + '~').c_str());
    
    return true;
 }
