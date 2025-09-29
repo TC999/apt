@@ -26,6 +26,7 @@ enum class Kind
    Reinstall,
    Upgrade,
    Downgrade,
+   InstallEnd = Downgrade,
    Remove,
    Purge,
 };
@@ -48,6 +49,13 @@ struct Change
    void *d; // pointer for future extension;
 };
 
+static inline bool IsRemoval(const Kind &kind) { return kind > Kind::InstallEnd; }
+
+// InvertChange - Take a change and return the
+// inverse. Inverse means that a change followed by
+// its inverse leads to no effective change.
+APT_PUBLIC Change InvertChange(const Change &change);
+
 struct Entry
 {
    // Strings instead of string_view to avoid reference errors
@@ -63,8 +71,18 @@ struct Entry
    void *d;
 };
 
+APT_PUBLIC std::vector<Change> FlattenChanges(const Entry &entry);
+
 // History is defined as the collection of entries in the history log(s).
 typedef std::vector<Entry> HistoryBuffer;
+
+struct KindMapping
+{
+   Kind kind;
+   // C++ 26 will introduce reflection, for now this works
+   Kind reverse;
+   std::string_view name;
+};
 
 // ParseSection - Take a tag section and parse it as a
 // history log entry.

@@ -6,6 +6,9 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/tagfile.h>
 
-APT_PUBLIC bool DoHistoryList(CommandLine &Cmd);
 APT_PUBLIC bool DoHistoryInfo(CommandLine &Cmd);
+APT_PUBLIC bool DoHistoryList(CommandLine &Cmd);
+APT_PUBLIC bool DoHistoryRedo(CommandLine &Cmd);
+APT_PUBLIC bool DoHistoryRollback(CommandLine &Cmd);
+APT_PUBLIC bool DoHistoryUndo(CommandLine &Cmd);
 #endif
