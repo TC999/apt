@@ -17,6 +17,7 @@
 #include <apt-private/private-history.h>
 #include <apt-private/private-install.h>
 
+#include <cassert>
 #include <iomanip>
 #include <iostream>
 #include <span>
@@ -29,6 +30,73 @@
 		     /*}}}*/
 
 using namespace APT::History;
+
+// =============================================================================
+// Internal API extensions
+// =============================================================================
+
+//
+
+static Kind ReflectKind(const Kind &kind)
+{
+   switch (kind)
+   {
+   case Kind::Install:
+   case Kind::Reinstall:
+      return Kind::Remove;
+   case Kind::Upgrade:
+      return Kind::Downgrade;
+   case Kind::Downgrade:
+      return Kind::Upgrade;
+   case Kind::Remove:
+   case Kind::Purge:
+      return Kind::Install;
+   default:
+      assert(false);
+      return kind;
+   }
+}
+
+std::vector<Change> APT::Internal::FlattenChanges(const Entry &entry)
+{
+   std::vector<Change> flattened;
+
+   size_t total_size = 0;
+   for (const auto &[_, changes] : entry.changeMap)
+      total_size += changes.size();
+   flattened.reserve(total_size);
+
+   for (const auto &[_, changes] : entry.changeMap)
+      flattened.insert(flattened.end(), changes.begin(), changes.end());
+   return flattened;
+}
+
+Change APT::Internal::InvertChange(const Change &change)
+{
+   Change inverse = change;
+   inverse.kind = ReflectKind(change.kind);
+
+   // tailor change after what action was performed
+   switch (change.kind)
+   {
+   case Kind::Upgrade:
+      std::swap(inverse.currentVersion, inverse.candidateVersion);
+      break;
+   case Kind::Downgrade:
+      std::swap(inverse.currentVersion, inverse.candidateVersion);
+      break;
+   default:
+      break;
+   }
+
+   return inverse;
+}
+
+// =============================================================================
+// Output formatting
+// =============================================================================
+
+//
 
 // ShortenCommand - Take a command and shorten it such that it adheres
 // to the given maximum length.
@@ -116,6 +184,12 @@ static std::string GetKindString(const Entry &entry)
       kindGroup.pop_back();
    return kindGroup;
 }
+
+// =============================================================================
+// Output printing
+// =============================================================================
+
+//
 
 static void PrintHistoryVector(const HistoryBuffer buf, int columnWidth)
 {
@@ -209,6 +283,12 @@ static void PrintDetailedEntry(const HistoryBuffer &buf, const size_t id)
    }
 }
 
+// =============================================================================
+// Transaction helpers
+// =============================================================================
+
+//
+
 class TransactionController
 {
    public:
@@ -286,6 +366,12 @@ static bool ParseId(const char *str, size_t &id, size_t max)
    return true;
 }
 
+// =============================================================================
+// Entrypoints
+// =============================================================================
+
+//
+
 bool DoHistoryUndo(CommandLine &Cmd)
 {
    HistoryBuffer buf = {};
@@ -301,8 +387,8 @@ bool DoHistoryUndo(CommandLine &Cmd)
       return false;
    TransactionController Controller(Cache);
 
-   for (const auto &change : FlattenChanges(buf[id]))
-      if (not Controller.AppendChange(InvertChange(change)))
+   for (const auto &change : APT::Internal::FlattenChanges(buf[id]))
+      if (not Controller.AppendChange(APT::Internal::InvertChange(change)))
 	 return false;
 
    return Controller.CommitChanges();
@@ -330,8 +416,8 @@ bool DoHistoryRollback(CommandLine &Cmd)
    std::span<Entry> bufSpan(buf.end() - numChanges, numChanges);
    // Iterate in reverse to process changes LIFO
    for (auto it = bufSpan.rbegin(); it != bufSpan.rend(); ++it)
-      for (const auto &change : FlattenChanges(*it))
-	 effectiveChangeMap[change.package] = InvertChange(change);
+      for (const auto &change : APT::Internal::FlattenChanges(*it))
+	 effectiveChangeMap[change.package] = APT::Internal::InvertChange(change);
 
    for (const auto &[_, change] : effectiveChangeMap)
    {
@@ -358,7 +444,7 @@ bool DoHistoryRedo(CommandLine &Cmd)
       return false;
    TransactionController Controller(Cache);
 
-   for (const auto &change : FlattenChanges(buf[id]))
+   for (const auto &change : APT::Internal::FlattenChanges(buf[id]))
       if (not Controller.AppendChange(change))
 	 return false;
 

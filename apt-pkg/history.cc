@@ -105,61 +105,6 @@ std::string KindToString(const Kind &kind)
    }
 }
 
-static Kind ReflectKind(const Kind &kind)
-{
-   switch (kind)
-   {
-      case Kind::Install:
-      case Kind::Reinstall:
-         return Kind::Remove;
-      case Kind::Upgrade:
-         return Kind::Downgrade;
-      case Kind::Downgrade:
-         return Kind::Upgrade;
-      case Kind::Remove:
-      case Kind::Purge:
-         return Kind::Install;
-      default:
-         assert(false);
-	 return kind;
-   }
-}
-
-Change InvertChange(const Change &change)
-{
-   Change inverse = change;
-   inverse.kind = ReflectKind(change.kind);
-
-   // tailor change after what action was performed
-   switch (change.kind)
-   {
-   case Kind::Upgrade:
-      std::swap(inverse.currentVersion, inverse.candidateVersion);
-      break;
-   case Kind::Downgrade:
-      std::swap(inverse.currentVersion, inverse.candidateVersion);
-      break;
-   default:
-      break;
-   }
-
-   return inverse;
-}
-
-std::vector<Change> FlattenChanges(const Entry &entry)
-{
-   std::vector<Change> flattened;
-
-   size_t total_size = 0;
-   for (const auto &[_, changes] : entry.changeMap)
-      total_size += changes.size();
-   flattened.reserve(total_size);
-
-   for (const auto &[_, changes] : entry.changeMap)
-      flattened.insert(flattened.end(), changes.begin(), changes.end());
-   return flattened;
-}
-
 Entry ParseSection(
    const pkgTagSection &section)
 {
