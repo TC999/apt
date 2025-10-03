@@ -13,9 +13,7 @@ jobs:
 
       - name: 编译测试
         run: |
-          mkdir build
-          cd build
-          cmake ..
+          cmake .
 
       - name: 测试1
         run: |
